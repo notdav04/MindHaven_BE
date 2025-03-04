@@ -48,8 +48,8 @@ public class WebSecurityConfig {
         // REGISTRAZIONE senza autorizzazioni
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/user/new").permitAll()
-                        .requestMatchers("/user/login").permitAll()
-                        .requestMatchers("/user/auth/**").hasRole("USER")
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/user/**").hasRole("USER")
                 .requestMatchers("/user/admin/**").hasRole("ADMIN"))
                 .sessionManagement(custom->custom.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(filtroAutorizzazione, UsernamePasswordAuthenticationFilter.class);

@@ -36,7 +36,7 @@ public class UtenteService {
         checkDuplicateKey(registrazione.getUsername());
         Utente user = registrazioneRequest_Utente(registrazione);
         user.setPassword(passwordCodificata);
-        if (registrazione.getRuolo().equals(Erole.USER.name()) || registrazione.getRuolo() == null){
+        if ( registrazione.getRuolo() == null || registrazione.getRuolo().equals(Erole.USER.name())){
             user.setRuolo(Erole.USER);
         } else if(registrazione.getRuolo().equals(Erole.ADMIN.name())){
             user.setRuolo(Erole.ADMIN);
