@@ -21,7 +21,6 @@ public class Professionista {
 
 
     @Column(nullable = false)
-
     private String ruolo;
 
     @Column(nullable = false)

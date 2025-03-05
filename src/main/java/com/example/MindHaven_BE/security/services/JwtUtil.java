@@ -1,6 +1,7 @@
 package com.example.MindHaven_BE.security.services;
 
 import com.example.MindHaven_BE.exception.CreateTokenException;
+import com.example.MindHaven_BE.model.Professionista;
 import com.example.MindHaven_BE.model.Utente;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
@@ -38,10 +39,27 @@ public class JwtUtil {
      * @param utente
      * @return il token in formato String
      */
-    public String creaToken(Utente utente){
+    public String creaToken(Utente utente ){
         // Impostazione del Claims (Payload)
         Claims claims = Jwts.claims().setSubject(utente.getUsername());
         claims.put("roles", utente.getRuolo());
+
+        Date dataCreazioneToken = new Date();
+        Date dataScadenza = new Date(dataCreazioneToken.getTime() + TimeUnit.MINUTES.toMillis(scadenza));
+
+        // CREAZIONE TOKEN : claims, data expiration, firma con tipologi algoritmo e la chiave
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(dataScadenza)
+                .signWith(SignatureAlgorithm.HS256, JWTSECRET)
+                .compact();
+
+        return token;
+    }
+    public String creaToken(Professionista professionista ){
+        // Impostazione del Claims (Payload)
+        Claims claims = Jwts.claims().setSubject(professionista.getUsername());
+        claims.put("roles", professionista.getRuolo());
 
         Date dataCreazioneToken = new Date();
         Date dataScadenza = new Date(dataCreazioneToken.getTime() + TimeUnit.MINUTES.toMillis(scadenza));

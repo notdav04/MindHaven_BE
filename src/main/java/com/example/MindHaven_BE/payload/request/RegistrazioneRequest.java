@@ -15,15 +15,7 @@ public class RegistrazioneRequest {
     private String ruolo;
 
 
-    //per professionisti
 
-    private String nome;
-
-    private String cognome;
-    @Email
-    private String email;
-
-//    private String avatar;
 
 
 
