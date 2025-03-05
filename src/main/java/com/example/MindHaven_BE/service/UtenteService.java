@@ -43,9 +43,7 @@ public class UtenteService {
     @Autowired
     PaginaDAORepository paginaRepo;
 
-
-
-
+    //registrazione utente
     public String newUser(RegistrazioneRequest registrazione){
         //creazione utente e set delle proprieta
         String passwordCodificata = encoder.encode(registrazione.getPassword());
@@ -68,6 +66,14 @@ public class UtenteService {
         return "Nuovo utente registrato con id: " + id;
     }
 
+    //controllo se l username è gia presente nel db
+    public void checkDuplicateKey(String username) throws UsernameDuplicateException {
+        if (userRepo.existsByUsername(username)) {
+            throw new UsernameDuplicateException("Username già utilizzato, non disponibile");
+        }
+    }
+
+    //login utente
     public LoginResponse login(String username, String password){
 
         // 1. AUTENTICAZIONE DELL'UTENTE IN FASE DI LOGIN
@@ -96,7 +102,7 @@ public class UtenteService {
         return new LoginResponse(username, token);
     }
 
-
+    //aggiunta di una pagina al diario
     public String newPaginaDiario(PaginaDTO dto, String username){
         //recupero l utente
         Utente utente = userRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun utente trovato con l username fornito!"));
@@ -113,11 +119,10 @@ public class UtenteService {
         return "pagina aggiunta correttamente al diario";
     }
 
-    //controllo se l username è gia presente nel db
-    public void checkDuplicateKey(String username) throws UsernameDuplicateException {
-        if (userRepo.existsByUsername(username)) {
-            throw new UsernameDuplicateException("Username già utilizzato, non disponibile");
-        }
+    //stampa del utente loggato
+    public Utente getMe(String username){
+        Utente utente = userRepo.findByUsername(username).orElseThrow(()-> new RuntimeException("nessun utente trovato con l username indicato!"));
+        return utente;
     }
 
     //travaso da registrazioneRequest a Utente

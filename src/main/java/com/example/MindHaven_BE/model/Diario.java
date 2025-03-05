@@ -1,6 +1,7 @@
 package com.example.MindHaven_BE.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class Diario {
     private long id;
     @OneToOne
     @JoinColumn(name = "utente_id")
+    @JsonIgnore
     private Utente utente;
 
     @OneToMany(mappedBy = "diario")

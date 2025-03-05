@@ -1,5 +1,6 @@
 package com.example.MindHaven_BE.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class Pagina {
     private String contenuto;
     @ManyToOne
     @JoinColumn(name= "diario_id")
+    @JsonIgnore
     private Diario diario;
 
 }

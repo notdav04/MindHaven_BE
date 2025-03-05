@@ -41,21 +41,16 @@ public class WebSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
         httpSecurity.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
-
         // Impostazione autorizzazioni sugli accessi
         // REGISTRAZIONE senza autorizzazioni
         httpSecurity.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/user/new").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/utente/**").hasRole("USER")
                 .requestMatchers("/user/admin/**").hasRole("ADMIN"))
                 .sessionManagement(custom->custom.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(filtroAutorizzazione, UsernamePasswordAuthenticationFilter.class);
-
         return httpSecurity.build();
-
     }
 
 
