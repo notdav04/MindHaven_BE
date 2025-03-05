@@ -2,13 +2,20 @@ package com.example.MindHaven_BE.service;
 
 
 import com.example.MindHaven_BE.exception.UsernameDuplicateException;
-import com.example.MindHaven_BE.model.Erole;
+import com.example.MindHaven_BE.model.Pagina;
 import com.example.MindHaven_BE.model.Utente;
+import com.example.MindHaven_BE.payload.PaginaDTO;
 import com.example.MindHaven_BE.payload.request.RegistrazioneRequest;
+import com.example.MindHaven_BE.payload.response.LoginResponse;
+import com.example.MindHaven_BE.repository.DiarioDAORepository;
+import com.example.MindHaven_BE.repository.PaginaDAORepository;
 import com.example.MindHaven_BE.repository.UtenteDAORepository;
 import com.example.MindHaven_BE.security.services.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class UtenteService {
+
+    @Autowired
+    DiarioDAORepository diarioRepo;
 
 
     @Autowired
@@ -30,34 +40,87 @@ public class UtenteService {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Autowired
+    PaginaDAORepository paginaRepo;
+
+
+
 
     public String newUser(RegistrazioneRequest registrazione){
+        //creazione utente e set delle proprieta
         String passwordCodificata = encoder.encode(registrazione.getPassword());
         checkDuplicateKey(registrazione.getUsername());
         Utente user = registrazioneRequest_Utente(registrazione);
         user.setPassword(passwordCodificata);
-        if ( registrazione.getRuolo() == null || registrazione.getRuolo().equals(Erole.USER.name())){
-            user.setRuolo(Erole.USER);
-        } else if(registrazione.getRuolo().equals(Erole.ADMIN.name())){
-            user.setRuolo(Erole.ADMIN);
+        //controllo per ruolo
+        if ( registrazione.getRuolo() == null || registrazione.getRuolo().equals("USER")){
+            user.setRuolo("USER");
+        } else if(registrazione.getRuolo().equals("ADMIN")){
+            user.setRuolo("ADMIN");
         }else{
             throw new RuntimeException("Errore: il valore inserito come ruolo non è valido");
         }
-
+        //salvo le informazioni dell utente nel diario
+        user.getDiario().setUtente(user);
+        diarioRepo.save(user.getDiario());
+        //return
         Long id = userRepo.save(user).getId();
         return "Nuovo utente registrato con id: " + id;
     }
 
-    public void checkDuplicateKey(String username) throws UsernameDuplicateException {
+    public LoginResponse login(String username, String password){
 
-        if (userRepo.existsByUsername(username)) {
-            throw new UsernameDuplicateException("Username già utilizzato, non disponibile");
+        // 1. AUTENTICAZIONE DELL'UTENTE IN FASE DI LOGIN
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+        // 2. INSERIMENTO DELL'AUTENTICAZIONE UTENTE NEL CONTESTO DELLA SICUREZZA
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+         //3. RECUPERO RUOLI --> String
+        String ruolo=null;
+        for(Object role :authentication.getAuthorities()){
+            ruolo=role.toString();
+            break;
         }
 
+//        Erole ruolo = authentication.getAuthorities();
+        // 4. GENERO L'UTENTE
+        Utente user = new Utente();
+        user.setUsername(username);
+        user.setRuolo(ruolo);
 
+        // 5. GENERO IL TOKEN
+        String token = jwtUtil.creaToken(user);
+
+        // 6. CREO L'OGGETTO DI RISPOSTA AL CLIENT
+        return new LoginResponse(username, token);
     }
 
 
+    public String newPaginaDiario(PaginaDTO dto, String username){
+        //recupero l utente
+        Utente utente = userRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun utente trovato con l username fornito!"));
+        //creo la pagina
+        Pagina pagina = new Pagina();
+        pagina.setDiario(utente.getDiario());
+        pagina.setContenuto(dto.getContenuto());
+        //aggiungo la pagina al diario
+        utente.getDiario().addPagina(pagina);
+        //salvo la pagina nel db e aggiorno il diario
+        paginaRepo.save(pagina);
+        diarioRepo.save(utente.getDiario());
+        //return
+        return "pagina aggiunta correttamente al diario";
+    }
+
+    //controllo se l username è gia presente nel db
+    public void checkDuplicateKey(String username) throws UsernameDuplicateException {
+        if (userRepo.existsByUsername(username)) {
+            throw new UsernameDuplicateException("Username già utilizzato, non disponibile");
+        }
+    }
+
+    //travaso da registrazioneRequest a Utente
     public Utente registrazioneRequest_Utente(RegistrazioneRequest request) {
         Utente utente = new Utente();
         utente.setUsername(request.getUsername());

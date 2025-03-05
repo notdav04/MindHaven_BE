@@ -21,8 +21,8 @@ public class Professionista {
 
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Erole ruolo;
+
+    private String ruolo;
 
     @Column(nullable = false)
     private String nome;

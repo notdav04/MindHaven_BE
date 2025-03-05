@@ -3,7 +3,9 @@ package com.example.MindHaven_BE.Controller;
 
 import com.example.MindHaven_BE.exception.UsernameDuplicateException;
 import com.example.MindHaven_BE.model.Utente;
+import com.example.MindHaven_BE.payload.request.LoginRequest;
 import com.example.MindHaven_BE.payload.request.RegistrazioneRequest;
+import com.example.MindHaven_BE.payload.response.LoginResponse;
 import com.example.MindHaven_BE.service.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,5 +45,22 @@ public class AuthController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Validated @RequestBody LoginRequest loginDTO, BindingResult checkValidazione) {
+        try {
+            if (checkValidazione.hasErrors()) {
+                StringBuilder erroriValidazione = new StringBuilder("Problemi nella validazione\n");
+                for (ObjectError errore : checkValidazione.getAllErrors()) {
+                    erroriValidazione.append(errore.getDefaultMessage());
+                }
+                return new ResponseEntity<>(erroriValidazione.toString(), HttpStatus.BAD_REQUEST);
+            }
+            LoginResponse response = utenteService.login(loginDTO.getUsername(), loginDTO.getPassword());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Credenziali non valide", HttpStatus.BAD_REQUEST);
+        }
     }
 }

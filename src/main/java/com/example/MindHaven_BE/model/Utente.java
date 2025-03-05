@@ -22,9 +22,15 @@ public class Utente {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(nullable = false)
-    private Erole ruolo;
+    private String ruolo;
+    @OneToOne
+    @JoinColumn(name="diario_id")
+    private Diario diario = new Diario();
+
+
+
 
 
 }
