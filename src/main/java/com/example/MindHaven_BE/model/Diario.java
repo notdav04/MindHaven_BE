@@ -17,6 +17,8 @@ public class Diario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    private boolean isPublic = false;
     @OneToOne
     @JoinColumn(name = "utente_id")
     @JsonIgnore
@@ -24,6 +26,10 @@ public class Diario {
 
     @OneToMany(mappedBy = "diario")
     private List<Pagina> pagine;
+
+
+
+
 
 
     public void addPagina(Pagina pagina){
