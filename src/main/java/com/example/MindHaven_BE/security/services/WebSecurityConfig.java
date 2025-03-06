@@ -48,6 +48,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/utente/**").hasRole("USER")
+                        .requestMatchers("/professionista/**").hasRole("PROFESSIONISTA")
                 .requestMatchers("/user/admin/**").hasRole("ADMIN"))
                 .sessionManagement(custom->custom.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(filtroAutorizzazione, UsernamePasswordAuthenticationFilter.class);

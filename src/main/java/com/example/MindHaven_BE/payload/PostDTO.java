@@ -1,9 +1,11 @@
 package com.example.MindHaven_BE.payload;
 
+import com.example.MindHaven_BE.model.Commento;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class PostDTO {
@@ -13,9 +15,11 @@ public class PostDTO {
     @NotBlank(message = "il campo è obbligatorio")
     private String descrizione;
 
-    @NotBlank(message = "il campo è obbligatorio")
+
     private long porfessionistaId;
 
     private LocalDate data;
+
+    private List<Commento> commenti;
 
 }

@@ -10,6 +10,7 @@ import com.example.MindHaven_BE.payload.ProfessionistaDTO;
 import com.example.MindHaven_BE.payload.request.RegistrazioneProfessionistaRequest;
 import com.example.MindHaven_BE.payload.request.RegistrazioneRequest;
 import com.example.MindHaven_BE.payload.response.LoginResponse;
+import com.example.MindHaven_BE.repository.PostDAORepository;
 import com.example.MindHaven_BE.repository.ProfessionistaDAORepository;
 import com.example.MindHaven_BE.security.services.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class ProfessionistaService {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Autowired
+    PostDAORepository postRepo;
+
     //registrazione professionista
     public String newProfessionista(RegistrazioneProfessionistaRequest registrazione){
         //creazione utente e set delle proprieta
@@ -50,7 +54,7 @@ public class ProfessionistaService {
         //return
         Long id = professionistaRepo.save(professionista).getId();
         System.out.println(professionista);
-        return "Nuovo utente registrato con id: " + id;
+        return "Nuovo professionista registrato con id: " + id;
     }
 
     //controllo se l username o  la password è gia presente nel db
@@ -94,7 +98,23 @@ public class ProfessionistaService {
         return listaDTO;
     }
 
+    //creazione nuovo post
+    public String newPost(PostDTO dto, String username){
+        //creo post
+        Post post = new Post();
+        //recupero professionista
+        Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow(()-> new RuntimeException("Professionista non trovato con l username fornito!"));
+        //trasformo il dto in post
+        post = dto_post(dto);
+        //setto il professionista legato al post
+        post.setProfessionista(professionista);
+        //salvo nel db il post
+        postRepo.save(post);
+        //return
+        return "nuovo post con id: " + post.getId() + " dal professionista con id: " + professionista.getId();
+    }
 
+    //travaso da registrazioneProfessionistaRequest a Professionista
     public Professionista registrazione_Professionista(RegistrazioneProfessionistaRequest reg){
         Professionista professionista = new Professionista();
         professionista.setNome(reg.getNome());
@@ -106,6 +126,7 @@ public class ProfessionistaService {
 
     }
 
+    //travaso da Professionista a ProfessionistaDTO
     public ProfessionistaDTO professionista_dto(Professionista professionista){
         ProfessionistaDTO dto = new ProfessionistaDTO();
         dto.setNome(professionista.getNome());
@@ -121,13 +142,23 @@ public class ProfessionistaService {
         return dto;
     }
 
+    //travaso da Post a PostDTO
     public PostDTO post_dto(Post post){
         PostDTO dto = new PostDTO();
         dto.setTitolo(post.getTitolo());
         dto.setDescrizione(post.getDescrizione());
         dto.setData(post.getData());
         dto.setPorfessionistaId(post.getProfessionista().getId());
+        dto.setCommenti(post.getCommenti());
         return dto;
+    }
+
+    //travaso da PostDTO a Post
+    public Post dto_post(PostDTO dto){
+        Post post = new Post();
+        post.setTitolo(dto.getTitolo());
+        post.setDescrizione(dto.getDescrizione());
+        return post;
     }
 
 
