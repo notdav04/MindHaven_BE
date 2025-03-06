@@ -114,6 +114,14 @@ public class ProfessionistaService {
         return "nuovo post con id: " + post.getId() + " dal professionista con id: " + professionista.getId();
     }
 
+    public ProfessionistaDTO getById(long id){
+        Professionista professionista = professionistaRepo.findById(id).orElseThrow(()->new RuntimeException("nessun professionista trovato con l id fornito!"));
+        ProfessionistaDTO dto = professionista_dto(professionista);
+        return dto;
+    }
+
+
+
     //travaso da registrazioneProfessionistaRequest a Professionista
     public Professionista registrazione_Professionista(RegistrazioneProfessionistaRequest reg){
         Professionista professionista = new Professionista();
