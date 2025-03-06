@@ -1,0 +1,27 @@
+package com.example.MindHaven_BE.Controller;
+
+import com.example.MindHaven_BE.payload.ProfessionistaDTO;
+import com.example.MindHaven_BE.service.ProfessionistaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/public")
+public class PublicController {
+    @Autowired
+    ProfessionistaService professionistaService;
+
+    @GetMapping("/professionisti")
+    public List<ProfessionistaDTO> getAllProfessionisti(){
+        System.out.println("sono nel get all------------------------------------------------------------");
+        List<ProfessionistaDTO> listaProfessionisti = professionistaService.getAll();
+        return listaProfessionisti;
+    }
+
+
+
+}

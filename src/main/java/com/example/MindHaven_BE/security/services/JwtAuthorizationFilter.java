@@ -31,8 +31,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        //ignora il filtro principale se il percorso inizia con endpoint di metodi public
         String path  = request.getRequestURI();
-        if (path.startsWith("/auth")){
+        if (path.startsWith("/auth") || path.startsWith("/public")){
             filterChain.doFilter(request, response);
             return;
         }

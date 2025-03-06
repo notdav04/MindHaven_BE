@@ -2,8 +2,11 @@ package com.example.MindHaven_BE.service;
 
 import com.example.MindHaven_BE.exception.EmailDuplicateException;
 import com.example.MindHaven_BE.exception.UsernameDuplicateException;
+import com.example.MindHaven_BE.model.Post;
 import com.example.MindHaven_BE.model.Professionista;
 import com.example.MindHaven_BE.model.Utente;
+import com.example.MindHaven_BE.payload.PostDTO;
+import com.example.MindHaven_BE.payload.ProfessionistaDTO;
 import com.example.MindHaven_BE.payload.request.RegistrazioneProfessionistaRequest;
 import com.example.MindHaven_BE.payload.request.RegistrazioneRequest;
 import com.example.MindHaven_BE.payload.response.LoginResponse;
@@ -17,6 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -78,6 +84,16 @@ public class ProfessionistaService {
         return new LoginResponse(username, token);
     }
 
+    //get all professionisti
+    public List<ProfessionistaDTO> getAll(){
+        List<Professionista> listaProfessionisti = professionistaRepo.findAll();
+        List<ProfessionistaDTO> listaDTO = new ArrayList<>();
+        listaProfessionisti.forEach(ele->{
+            listaDTO.add(professionista_dto(ele));
+        });
+        return listaDTO;
+    }
+
 
     public Professionista registrazione_Professionista(RegistrazioneProfessionistaRequest reg){
         Professionista professionista = new Professionista();
@@ -88,6 +104,30 @@ public class ProfessionistaService {
         professionista.setRuolo(reg.getRuolo());
         return professionista;
 
+    }
+
+    public ProfessionistaDTO professionista_dto(Professionista professionista){
+        ProfessionistaDTO dto = new ProfessionistaDTO();
+        dto.setNome(professionista.getNome());
+        dto.setCognome(professionista.getCognome());
+        dto.setEmail(professionista.getEmail());
+        dto.setUsername(professionista.getUsername());
+        List<PostDTO> listadto = new ArrayList<>();
+        professionista.getPosts().forEach(ele->{
+            PostDTO postDTO = post_dto(ele);
+            listadto.add(postDTO);
+        });
+        dto.setListapost(listadto);
+        return dto;
+    }
+
+    public PostDTO post_dto(Post post){
+        PostDTO dto = new PostDTO();
+        dto.setTitolo(post.getTitolo());
+        dto.setDescrizione(post.getDescrizione());
+        dto.setData(post.getData());
+        dto.setPorfessionistaId(post.getProfessionista().getId());
+        return dto;
     }
 
 

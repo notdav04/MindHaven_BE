@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class Post {
 
     @Column(nullable = false)
     private String descrizione;
+
+
+    private LocalDate data = LocalDate.now();
 
 
     @ManyToOne

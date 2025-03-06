@@ -46,6 +46,7 @@ public class WebSecurityConfig {
         // REGISTRAZIONE senza autorizzazioni
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/utente/**").hasRole("USER")
                 .requestMatchers("/user/admin/**").hasRole("ADMIN"))
                 .sessionManagement(custom->custom.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
