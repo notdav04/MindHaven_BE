@@ -1,6 +1,8 @@
 package com.example.MindHaven_BE.Controller;
 
+import com.example.MindHaven_BE.payload.PostDTO;
 import com.example.MindHaven_BE.payload.ProfessionistaDTO;
+import com.example.MindHaven_BE.service.PostService;
 import com.example.MindHaven_BE.service.ProfessionistaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,9 @@ public class PublicController {
     @Autowired
     ProfessionistaService professionistaService;
 
+    @Autowired
+    PostService postService;
+
     @GetMapping("/professionisti")
     public List<ProfessionistaDTO> getAllProfessionisti(){
         System.out.println("sono nel get all------------------------------------------------------------");
@@ -29,6 +34,14 @@ public class PublicController {
         ProfessionistaDTO dto = professionistaService.getById(id);
         return dto;
     }
+
+    @GetMapping("/post")
+    public List<PostDTO> getAllPost(){
+            List<PostDTO> listaDTO = postService.getAll();
+            return listaDTO;
+    }
+
+
 
 
 

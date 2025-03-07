@@ -1,7 +1,9 @@
 package com.example.MindHaven_BE.Controller;
 
+import com.example.MindHaven_BE.payload.CommentoDTO;
 import com.example.MindHaven_BE.payload.PostDTO;
 import com.example.MindHaven_BE.payload.ProfessionistaDTO;
+import com.example.MindHaven_BE.service.PostService;
 import com.example.MindHaven_BE.service.ProfessionistaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class ProfessionistaController {
     @Autowired
     ProfessionistaService professionistaService;
+    @Autowired
+    PostService postService;
 
     //endpoint per creazione di un nuovo post da professionista
     @PostMapping("/post/new")
@@ -29,9 +33,25 @@ public class ProfessionistaController {
             return new ResponseEntity<>(errori.toString(), HttpStatus.BAD_REQUEST);
         }
             String username = auth.getName();
-            String message = professionistaService.newPost(dto, username);
+            String message = postService.newPost(dto, username);
             return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
+
+    //endpoint per aggiungere commenti sul post
+    @PostMapping("/post/{id}/commento")
+    public ResponseEntity<?> creaCommento(@RequestBody @Validated CommentoDTO dto, @PathVariable long id,Authentication auth, BindingResult validation){
+        if (validation.hasErrors()) {
+            StringBuilder errori = new StringBuilder("Problemi nella validazione dati :\n");
+            for (ObjectError errore : validation.getAllErrors()) {
+                errori.append(errore.getDefaultMessage()).append("\n");
+            }
+            return new ResponseEntity<>(errori.toString(), HttpStatus.BAD_REQUEST);
+        }
+        String username = auth.getName();
+        String message = professionistaService.newCommento(dto, id, username);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
+    }
+
 
 
 

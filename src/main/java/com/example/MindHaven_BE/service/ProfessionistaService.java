@@ -2,18 +2,23 @@ package com.example.MindHaven_BE.service;
 
 import com.example.MindHaven_BE.exception.EmailDuplicateException;
 import com.example.MindHaven_BE.exception.UsernameDuplicateException;
+import com.example.MindHaven_BE.model.Commento;
 import com.example.MindHaven_BE.model.Post;
 import com.example.MindHaven_BE.model.Professionista;
 import com.example.MindHaven_BE.model.Utente;
+import com.example.MindHaven_BE.payload.AppuntamentoDTO;
+import com.example.MindHaven_BE.payload.CommentoDTO;
 import com.example.MindHaven_BE.payload.PostDTO;
 import com.example.MindHaven_BE.payload.ProfessionistaDTO;
 import com.example.MindHaven_BE.payload.request.RegistrazioneProfessionistaRequest;
 import com.example.MindHaven_BE.payload.request.RegistrazioneRequest;
 import com.example.MindHaven_BE.payload.response.LoginResponse;
+import com.example.MindHaven_BE.repository.CommentoDAORepository;
 import com.example.MindHaven_BE.repository.PostDAORepository;
 import com.example.MindHaven_BE.repository.ProfessionistaDAORepository;
 import com.example.MindHaven_BE.security.services.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,6 +48,11 @@ public class ProfessionistaService {
     @Autowired
     PostDAORepository postRepo;
 
+    @Autowired
+    CommentoDAORepository commentoRepo;
+
+    @Autowired PostService postService;
+
     //registrazione professionista
     public String newProfessionista(RegistrazioneProfessionistaRequest registrazione){
         //creazione utente e set delle proprieta
@@ -66,7 +76,7 @@ public class ProfessionistaService {
         }
     }
 
-    //login utente
+    //login professionista
     public LoginResponse login(String username, String password){
         // 1. AUTENTICAZIONE DELL'UTENTE IN FASE DI LOGIN
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -98,26 +108,25 @@ public class ProfessionistaService {
         return listaDTO;
     }
 
-    //creazione nuovo post
-    public String newPost(PostDTO dto, String username){
-        //creo post
-        Post post = new Post();
-        //recupero professionista
-        Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow(()-> new RuntimeException("Professionista non trovato con l username fornito!"));
-        //trasformo il dto in post
-        post = dto_post(dto);
-        //setto il professionista legato al post
-        post.setProfessionista(professionista);
-        //salvo nel db il post
-        postRepo.save(post);
-        //return
-        return "nuovo post con id: " + post.getId() + " dal professionista con id: " + professionista.getId();
-    }
-
+    //get professionista by id
     public ProfessionistaDTO getById(long id){
         Professionista professionista = professionistaRepo.findById(id).orElseThrow(()->new RuntimeException("nessun professionista trovato con l id fornito!"));
         ProfessionistaDTO dto = professionista_dto(professionista);
         return dto;
+    }
+
+    //creazione commento
+    public String newCommento(CommentoDTO dto , long postId, String username){
+        Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun professionista trovato con l username fornito!"));
+        Post post = postRepo.findById(postId).orElseThrow(()->new RuntimeException("nessun post trovato con l id fornito!"));
+        Commento commento  = dto_commento(dto, professionista, post);
+        commentoRepo.save(commento);
+        return "commento creato correttamente da professionista con id: "+ professionista.getId() + " sul post con id: "+ post.getId();
+    }
+
+    //creazione appuntamento
+    public String newAppuntamento (AppuntamentoDTO dto, String username){
+
     }
 
 
@@ -143,30 +152,22 @@ public class ProfessionistaService {
         dto.setUsername(professionista.getUsername());
         List<PostDTO> listadto = new ArrayList<>();
         professionista.getPosts().forEach(ele->{
-            PostDTO postDTO = post_dto(ele);
+            PostDTO postDTO = postService.post_dto(ele);
             listadto.add(postDTO);
         });
         dto.setListapost(listadto);
         return dto;
     }
 
-    //travaso da Post a PostDTO
-    public PostDTO post_dto(Post post){
-        PostDTO dto = new PostDTO();
-        dto.setTitolo(post.getTitolo());
-        dto.setDescrizione(post.getDescrizione());
-        dto.setData(post.getData());
-        dto.setPorfessionistaId(post.getProfessionista().getId());
-        dto.setCommenti(post.getCommenti());
-        return dto;
-    }
 
-    //travaso da PostDTO a Post
-    public Post dto_post(PostDTO dto){
-        Post post = new Post();
-        post.setTitolo(dto.getTitolo());
-        post.setDescrizione(dto.getDescrizione());
-        return post;
+
+    //travaso da CommentoDto a Commento
+    public Commento dto_commento(CommentoDTO dto, Professionista professionista, Post post){
+        Commento commento =  new Commento();
+        commento.setTesto(dto.getTesto());
+        commento.setProfessionista(professionista);
+        commento.setPost(post);
+        return commento;
     }
 
 

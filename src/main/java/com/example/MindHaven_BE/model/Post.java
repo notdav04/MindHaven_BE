@@ -1,5 +1,6 @@
 package com.example.MindHaven_BE.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,9 +33,11 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "professionista_id")
+
     private Professionista professionista;
 
     @OneToMany(mappedBy = "id")
+    @JsonIgnore
     private List<Commento> commenti = new ArrayList<>();
 
 
