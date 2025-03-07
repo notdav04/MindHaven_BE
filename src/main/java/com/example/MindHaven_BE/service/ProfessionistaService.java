@@ -125,9 +125,9 @@ public class ProfessionistaService {
     }
 
     //creazione appuntamento
-    public String newAppuntamento (AppuntamentoDTO dto, String username){
-
-    }
+//    public String newAppuntamento (AppuntamentoDTO dto, String username){
+//
+//    }
 
 
 
