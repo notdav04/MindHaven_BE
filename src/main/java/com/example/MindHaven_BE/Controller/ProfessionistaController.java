@@ -1,8 +1,10 @@
 package com.example.MindHaven_BE.Controller;
 
+import com.example.MindHaven_BE.payload.AppuntamentoDTO;
 import com.example.MindHaven_BE.payload.CommentoDTO;
 import com.example.MindHaven_BE.payload.PostDTO;
 import com.example.MindHaven_BE.payload.ProfessionistaDTO;
+import com.example.MindHaven_BE.service.AppuntamentoService;
 import com.example.MindHaven_BE.service.PostService;
 import com.example.MindHaven_BE.service.ProfessionistaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.Binding;
+
 @RestController
 @RequestMapping("/professionista")
 public class ProfessionistaController {
@@ -21,6 +25,8 @@ public class ProfessionistaController {
     ProfessionistaService professionistaService;
     @Autowired
     PostService postService;
+    @Autowired
+    AppuntamentoService appuntamentoService;
 
     //endpoint per creazione di un nuovo post da professionista
     @PostMapping("/post/new")
@@ -49,6 +55,21 @@ public class ProfessionistaController {
         }
         String username = auth.getName();
         String message = professionistaService.newCommento(dto, id, username);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/appuntamento/new")
+    public ResponseEntity<?> creaAppuntamento(@RequestBody @Validated AppuntamentoDTO dto, Authentication auth, BindingResult validation){
+        if (validation.hasErrors()) {
+            StringBuilder errori = new StringBuilder("Problemi nella validazione dati :\n");
+            for (ObjectError errore : validation.getAllErrors()) {
+                errori.append(errore.getDefaultMessage()).append("\n");
+            }
+            return new ResponseEntity<>(errori.toString(), HttpStatus.BAD_REQUEST);
+        }
+        String username = auth.getName();
+        String message = appuntamentoService.newAppuntamento(dto, username);
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
