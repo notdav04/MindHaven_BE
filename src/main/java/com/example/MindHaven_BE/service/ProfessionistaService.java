@@ -121,6 +121,9 @@ public class ProfessionistaService {
         Post post = postRepo.findById(postId).orElseThrow(()->new RuntimeException("nessun post trovato con l id fornito!"));
         Commento commento  = dto_commento(dto, professionista, post);
         commentoRepo.save(commento);
+        post.getCommenti().add(commento);
+        postRepo.save(post);
+
         return "commento creato correttamente da professionista con id: "+ professionista.getId() + " sul post con id: "+ post.getId();
     }
 

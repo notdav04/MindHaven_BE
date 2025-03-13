@@ -1,7 +1,9 @@
 package com.example.MindHaven_BE.service;
 
+import com.example.MindHaven_BE.model.Commento;
 import com.example.MindHaven_BE.model.Post;
 import com.example.MindHaven_BE.model.Professionista;
+import com.example.MindHaven_BE.payload.CommentoDTO;
 import com.example.MindHaven_BE.payload.PostDTO;
 import com.example.MindHaven_BE.repository.PostDAORepository;
 import com.example.MindHaven_BE.repository.ProfessionistaDAORepository;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,8 +58,15 @@ public class PostService {
         dto.setTitolo(post.getTitolo());
         dto.setDescrizione(post.getDescrizione());
         dto.setData(post.getData());
-        dto.setPorfessionistaId(post.getProfessionista().getId());
-        dto.setCommenti(post.getCommenti());
+        dto.setUsernameProfessionista(post.getProfessionista().getUsername());
+        if (post.getCommenti() != null) {
+            List<CommentoDTO> commentoDTOList = post.getCommenti().stream()
+                    .map(commento -> commento_dto(commento))
+                    .collect(Collectors.toList());
+            dto.setCommenti(commentoDTOList);
+        } else {
+            dto.setCommenti(new ArrayList<>());
+        }
         return dto;
     }
 
@@ -66,5 +76,13 @@ public class PostService {
         post.setTitolo(dto.getTitolo());
         post.setDescrizione(dto.getDescrizione());
         return post;
+    }
+
+    //travaso da commento a dto
+    public CommentoDTO commento_dto(Commento commento){
+        CommentoDTO dto = new CommentoDTO();
+        dto.setTesto(commento.getTesto());
+        dto.setUsernameProfessionista(commento.getProfessionista().getUsername());
+        return dto;
     }
 }

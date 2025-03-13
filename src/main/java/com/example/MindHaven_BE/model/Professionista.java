@@ -53,6 +53,7 @@ public class Professionista {
 
 
     @OneToMany(mappedBy = "id")
+    @JsonIgnore
     private List<Appuntamento> appuntamenti = new ArrayList<>();
 
 

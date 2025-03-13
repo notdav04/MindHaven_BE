@@ -21,4 +21,6 @@ public class Appuntamento {
     private LocalDate data;
 
     private boolean disponibile = true;
+    @ManyToOne
+    private Utente utente;
 }

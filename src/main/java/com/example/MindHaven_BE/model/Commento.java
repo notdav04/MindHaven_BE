@@ -24,7 +24,7 @@ public class Commento {
     private Professionista professionista;
 
     @ManyToOne
-    @JoinColumn(name= "post_id")
+    @JoinColumn(name= "post")
     @JsonIgnore
     private Post post;
 }

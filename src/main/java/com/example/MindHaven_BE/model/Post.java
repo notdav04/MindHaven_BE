@@ -36,8 +36,8 @@ public class Post {
 
     private Professionista professionista;
 
-    @OneToMany(mappedBy = "id")
-    @JsonIgnore
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+
     private List<Commento> commenti = new ArrayList<>();
 
 

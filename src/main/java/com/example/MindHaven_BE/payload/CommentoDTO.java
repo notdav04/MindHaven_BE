@@ -9,6 +9,8 @@ public class CommentoDTO {
     @NotBlank(message = "il campo testo è obbligatorio")
     private String testo;
 
+    private String usernameProfessionista;
+
 
 
 

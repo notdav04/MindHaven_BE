@@ -16,10 +16,10 @@ public class PostDTO {
     private String descrizione;
 
 
-    private long porfessionistaId;
+    private String usernameProfessionista;
 
     private LocalDate data;
 
-    private List<Commento> commenti;
+    private List<CommentoDTO> commenti;
 
 }
