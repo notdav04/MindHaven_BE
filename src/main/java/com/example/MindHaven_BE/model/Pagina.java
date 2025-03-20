@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
+import org.w3c.dom.Text;
 
 import java.time.LocalDate;
 
@@ -19,7 +20,7 @@ public class Pagina {
     private long id;
     @Column(nullable = false)
     private LocalDate data = LocalDate.now();
-    @Column(nullable= false)
+    @Column(nullable= false, columnDefinition = "TEXT")
     private String contenuto;
     @ManyToOne
     @JoinColumn(name= "diario_id")
