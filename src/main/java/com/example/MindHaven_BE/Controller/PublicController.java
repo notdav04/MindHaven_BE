@@ -34,14 +34,14 @@ public class PublicController {
     }
 
     //professionista con id
-    @GetMapping("/professionisti/{id}")
+    @GetMapping("/professionisti/id/{id}")
     public ProfessionistaDTO getProfessionistaById(@PathVariable long id){
         ProfessionistaDTO dto = professionistaService.getById(id);
         return dto;
     }
 
     //professionista con username
-    @GetMapping("/professionista/{username")
+    @GetMapping("/professionisti/username/{username}")
     public ProfessionistaDTO getProfessionistaByUsername(@PathVariable String username){
         ProfessionistaDTO dto = professionistaService.getByUsername(username);
         return dto;
