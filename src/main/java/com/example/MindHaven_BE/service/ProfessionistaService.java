@@ -115,6 +115,13 @@ public class ProfessionistaService {
         return dto;
     }
 
+    //get professionista by username
+    public ProfessionistaDTO getByUsername(String username){
+        Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun professionista trovato con l username fornito!"));
+        ProfessionistaDTO dto = professionista_dto(professionista);
+        return dto;
+    }
+
     //creazione commento
     public String newCommento(CommentoDTO dto , long postId, String username){
         Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun professionista trovato con l username fornito!"));

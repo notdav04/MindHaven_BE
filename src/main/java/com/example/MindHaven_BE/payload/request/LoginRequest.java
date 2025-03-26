@@ -8,11 +8,11 @@ import lombok.Data;
 public class LoginRequest {
 
     @NotBlank(message = "Username è un campo obbligatorio")
-    @Size(min = 3, max = 15)
+    @Size(min = 3, max = 25)
     private String username;
 
     @NotBlank(message = "Password è un campo obbligatorio")
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max= 25)
     private String password;
 
 

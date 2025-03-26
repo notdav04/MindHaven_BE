@@ -31,7 +31,7 @@ public class Utente {
     private String ruolo;
     @OneToOne
     @JoinColumn(name="diario_id")
-    @JsonIgnore
+
     private Diario diario = new Diario();
 
 

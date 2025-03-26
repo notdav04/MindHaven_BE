@@ -40,6 +40,13 @@ public class PublicController {
         return dto;
     }
 
+    //professionista con username
+    @GetMapping("/professionista/{username")
+    public ProfessionistaDTO getProfessionistaByUsername(@PathVariable String username){
+        ProfessionistaDTO dto = professionistaService.getByUsername(username);
+        return dto;
+    }
+
     @GetMapping("/post")
     public List<PostDTO> getAllPost(){
             List<PostDTO> listaDTO = postService.getAll();
