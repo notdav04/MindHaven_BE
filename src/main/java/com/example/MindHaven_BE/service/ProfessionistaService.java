@@ -2,10 +2,7 @@ package com.example.MindHaven_BE.service;
 
 import com.example.MindHaven_BE.exception.EmailDuplicateException;
 import com.example.MindHaven_BE.exception.UsernameDuplicateException;
-import com.example.MindHaven_BE.model.Commento;
-import com.example.MindHaven_BE.model.Post;
-import com.example.MindHaven_BE.model.Professionista;
-import com.example.MindHaven_BE.model.Utente;
+import com.example.MindHaven_BE.model.*;
 import com.example.MindHaven_BE.payload.AppuntamentoDTO;
 import com.example.MindHaven_BE.payload.CommentoDTO;
 import com.example.MindHaven_BE.payload.PostDTO;
@@ -14,11 +11,13 @@ import com.example.MindHaven_BE.payload.request.RegistrazioneProfessionistaReque
 import com.example.MindHaven_BE.payload.request.RegistrazioneRequest;
 import com.example.MindHaven_BE.payload.response.LoginResponse;
 import com.example.MindHaven_BE.repository.CommentoDAORepository;
+import com.example.MindHaven_BE.repository.DiarioDAORepository;
 import com.example.MindHaven_BE.repository.PostDAORepository;
 import com.example.MindHaven_BE.repository.ProfessionistaDAORepository;
 import com.example.MindHaven_BE.security.services.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,6 +49,9 @@ public class ProfessionistaService {
 
     @Autowired
     CommentoDAORepository commentoRepo;
+
+    @Autowired
+    DiarioDAORepository diarioRepo;
 
     @Autowired PostService postService;
 
@@ -138,6 +140,20 @@ public class ProfessionistaService {
 //    public String newAppuntamento (AppuntamentoDTO dto, String username){
 //
 //    }
+
+    //rendere pubblic un diario in fase di approvazione
+    public HttpStatus approvaDiario(long id ){
+        Diario diario = diarioRepo.findById(id).orElseThrow(()->new RuntimeException("nessun diario trovato con l id fornito!"));
+        if(diario.isRequestedPublic()) {
+            diario.setPublic(true);
+            diario.setRequestedPublic(false);
+            diarioRepo.save(diario);
+            return HttpStatus.OK;
+        }else {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+    }
 
 
 

@@ -54,6 +54,14 @@ public class UtenteController {
         return new ResponseEntity<>(utente, HttpStatus.CREATED);
     }
 
+    @PutMapping("/diario/public")
+    public ResponseEntity<?> cambiaStatoDiario( Authentication auth){
+        String username = auth.getName();
+        String message = utenteService.cambiaStato(username);
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+
 
 
 

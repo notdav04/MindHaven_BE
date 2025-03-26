@@ -7,6 +7,7 @@ import com.example.MindHaven_BE.payload.ProfessionistaDTO;
 import com.example.MindHaven_BE.service.AppuntamentoService;
 import com.example.MindHaven_BE.service.PostService;
 import com.example.MindHaven_BE.service.ProfessionistaService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +72,17 @@ public class ProfessionistaController {
         String username = auth.getName();
         String message = appuntamentoService.newAppuntamento(dto, username);
         return new ResponseEntity<>(message, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/diario/approva/{id}")
+    public ResponseEntity<?> approvaDiario (@PathVariable long id , Authentication auth){
+        HttpStatus status = professionistaService.approvaDiario(id);
+        if (status==HttpStatus.OK){
+            return new ResponseEntity<>("approvazione del diario effettuata correttamente!", status);
+        } else {
+            return new ResponseEntity<>("il diario non è in fase di pubblicazione!", status);
+        }
+
     }
 
 

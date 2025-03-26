@@ -2,6 +2,7 @@ package com.example.MindHaven_BE.service;
 
 
 import com.example.MindHaven_BE.exception.UsernameDuplicateException;
+import com.example.MindHaven_BE.model.Diario;
 import com.example.MindHaven_BE.model.Pagina;
 import com.example.MindHaven_BE.model.Utente;
 import com.example.MindHaven_BE.payload.PaginaDTO;
@@ -123,6 +124,20 @@ public class UtenteService {
     public Utente getMe(String username){
         Utente utente = userRepo.findByUsername(username).orElseThrow(()-> new RuntimeException("nessun utente trovato con l username indicato!"));
         return utente;
+    }
+
+    //cambia stato del diario
+    public String cambiaStato(String username) {
+        Utente utente = userRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun utente trovato con l username fornito!"));
+        Diario diario = utente.getDiario();
+        if (diario.isRequestedPublic() || diario.isPublic()){
+            diario.setRequestedPublic(false);
+            diario.setPublic(false);
+        } else if(!diario.isRequestedPublic()){
+            diario.setRequestedPublic(true);
+        }
+        diarioRepo.save(diario);
+        return "stato del diario cambiato correttamente!";
     }
 
     //travaso da registrazioneRequest a Utente

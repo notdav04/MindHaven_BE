@@ -26,6 +26,9 @@ public class Diario {
 
     @OneToMany(mappedBy = "diario")
     private List<Pagina> pagine;
+    @Column(nullable = false, columnDefinition = "boolean DEFAULT false")
+    private boolean requestedPublic = false;
+
 
 
 
