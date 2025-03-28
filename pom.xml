@@ -112,8 +112,7 @@
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-taglib</artifactId>
 			<version>2.0.0</version>
-		</dependency>
-	</dependencies>
+		</dependency>	</dependencies>
 
 	<build>
 		<plugins>

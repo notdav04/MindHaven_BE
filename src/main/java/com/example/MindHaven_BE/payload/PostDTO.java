@@ -16,7 +16,7 @@ public class PostDTO {
     @NotBlank(message = "il campo è obbligatorio")
     private String descrizione;
 
-
+    private String avatarProfessionista;
     private String usernameProfessionista;
 
     private LocalDate data;

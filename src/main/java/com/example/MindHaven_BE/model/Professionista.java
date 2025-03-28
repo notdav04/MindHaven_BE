@@ -56,7 +56,7 @@ public class Professionista {
     @JsonIgnore
     private List<Appuntamento> appuntamenti = new ArrayList<>();
 
-
+    private String avatar = "";
 
 
 

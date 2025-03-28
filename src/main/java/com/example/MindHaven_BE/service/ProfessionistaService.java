@@ -190,6 +190,14 @@ public class ProfessionistaService {
 
     }
 
+    //modifica avatar
+    public String modificaAvatar(String username, String urlImg) {
+        Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow();
+        professionista.setAvatar(urlImg);
+        return "Immagine dell'avatar modificata";
+    }
+
+
 
     //travaso da registrazioneProfessionistaRequest a Professionista
     public Professionista registrazione_Professionista(RegistrazioneProfessionistaRequest reg){
@@ -210,6 +218,7 @@ public class ProfessionistaService {
         dto.setCognome(professionista.getCognome());
         dto.setEmail(professionista.getEmail());
         dto.setUsername(professionista.getUsername());
+        dto.setAvatar(professionista.getAvatar());
         List<PostDTO> listadto = new ArrayList<>();
         professionista.getPosts().forEach(ele->{
             PostDTO postDTO = postService.post_dto(ele);

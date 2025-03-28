@@ -62,6 +62,7 @@ public class PostService {
         dto.setDescrizione(post.getDescrizione());
         dto.setData(post.getData());
         dto.setUsernameProfessionista(post.getProfessionista().getUsername());
+        dto.setAvatarProfessionista(post.getProfessionista().getAvatar());
         if (post.getCommenti() != null) {
             List<CommentoDTO> commentoDTOList = post.getCommenti().stream()
                     .map(commento -> commento_dto(commento))

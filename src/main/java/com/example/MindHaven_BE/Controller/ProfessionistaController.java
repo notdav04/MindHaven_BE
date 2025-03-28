@@ -1,5 +1,7 @@
 package com.example.MindHaven_BE.Controller;
-
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.example.MindHaven_BE.configuration.CloudinaryConfig;
 import com.example.MindHaven_BE.payload.*;
 import com.example.MindHaven_BE.service.AppuntamentoService;
 import com.example.MindHaven_BE.service.DiarioService;
@@ -10,13 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.naming.Binding;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/professionista")
@@ -29,6 +35,8 @@ public class ProfessionistaController {
     AppuntamentoService appuntamentoService;
     @Autowired
     DiarioService diarioService;
+    @Autowired
+    Cloudinary cloudinaryConfig;
 
     //endpoint per creazione di un nuovo post da professionista
     @PostMapping("/post/new")
@@ -122,6 +130,24 @@ public class ProfessionistaController {
         String result  = professionistaService.modMe(username, dto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
+    @PatchMapping("/me/avatar")
+    public ResponseEntity<?> cambiaAvatarProfessionista(@RequestPart("avatar") MultipartFile avatar, Authentication auth) {
+
+        try{
+
+            Map mappa = cloudinaryConfig.uploader().upload(avatar.getBytes(), ObjectUtils.emptyMap());
+            String urlImage = mappa.get("secure_url").toString();
+            String username = auth.getName();
+            professionistaService.modificaAvatar(username, urlImage);
+            return new ResponseEntity<>("Immagine avatar sostituita", HttpStatus.OK);
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
 
 

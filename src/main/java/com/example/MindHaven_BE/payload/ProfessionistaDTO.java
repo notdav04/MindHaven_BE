@@ -17,5 +17,7 @@ public class ProfessionistaDTO {
 
     private List<PostDTO> listapost;
 
+    private String avatar;
+
     private List<AppuntamentoDTO> listaAppuntamenti;
 }
