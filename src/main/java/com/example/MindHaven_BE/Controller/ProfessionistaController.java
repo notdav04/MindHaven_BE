@@ -1,10 +1,8 @@
 package com.example.MindHaven_BE.Controller;
 
-import com.example.MindHaven_BE.payload.AppuntamentoDTO;
-import com.example.MindHaven_BE.payload.CommentoDTO;
-import com.example.MindHaven_BE.payload.PostDTO;
-import com.example.MindHaven_BE.payload.ProfessionistaDTO;
+import com.example.MindHaven_BE.payload.*;
 import com.example.MindHaven_BE.service.AppuntamentoService;
+import com.example.MindHaven_BE.service.DiarioService;
 import com.example.MindHaven_BE.service.PostService;
 import com.example.MindHaven_BE.service.ProfessionistaService;
 import org.apache.coyote.Response;
@@ -18,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.Binding;
+import java.util.List;
 
 @RestController
 @RequestMapping("/professionista")
@@ -28,6 +27,8 @@ public class ProfessionistaController {
     PostService postService;
     @Autowired
     AppuntamentoService appuntamentoService;
+    @Autowired
+    DiarioService diarioService;
 
     //endpoint per creazione di un nuovo post da professionista
     @PostMapping("/post/new")
@@ -74,6 +75,12 @@ public class ProfessionistaController {
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
+    @GetMapping("/diario/approva")
+    public List<DiarioDTO> diariInApprovazione (){
+        List<DiarioDTO> listaDTO = diarioService.getDiariInApprovazione();
+        return listaDTO;
+    }
+
     @PutMapping("/diario/approva/{id}")
     public ResponseEntity<?> approvaDiario (@PathVariable long id , Authentication auth){
         HttpStatus status = professionistaService.approvaDiario(id);
@@ -82,7 +89,38 @@ public class ProfessionistaController {
         } else {
             return new ResponseEntity<>("il diario non è in fase di pubblicazione!", status);
         }
+    }
 
+    @GetMapping("/me")
+    public ProfessionistaDTO getMe(Authentication auth){
+        String username = auth.getName();
+        ProfessionistaDTO dto = professionistaService.getMe(username);
+        return dto;
+    }
+
+    @DeleteMapping("/post/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable long id, Authentication auth){
+        String username = auth.getName();
+        String result = professionistaService.deletePostById(username, id);
+        if ( result.contains("errore")) {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/me/modifica")
+    public ResponseEntity<?> modMe(@RequestBody @Validated ProfessionistaDTO dto, Authentication auth, BindingResult validation){
+        if (validation.hasErrors()) {
+            StringBuilder errori = new StringBuilder("Problemi nella validazione dati :\n");
+            for (ObjectError errore : validation.getAllErrors()) {
+                errori.append(errore.getDefaultMessage()).append("\n");
+            }
+            return new ResponseEntity<>(errori.toString(), HttpStatus.BAD_REQUEST);
+        }
+        String username = auth.getName();
+        String result  = professionistaService.modMe(username, dto);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

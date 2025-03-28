@@ -7,6 +7,7 @@ import com.example.MindHaven_BE.model.Utente;
 import com.example.MindHaven_BE.payload.PaginaDTO;
 import com.example.MindHaven_BE.payload.PostDTO;
 import com.example.MindHaven_BE.payload.ProfessionistaDTO;
+import com.example.MindHaven_BE.payload.UserDTO;
 import com.example.MindHaven_BE.service.ProfessionistaService;
 import com.example.MindHaven_BE.service.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,22 @@ public class UtenteController {
     public ResponseEntity<?> cambiaStatoDiario( Authentication auth){
         String username = auth.getName();
         String message = utenteService.cambiaStato(username);
+
         return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    @PutMapping("/me/modifica")
+    public ResponseEntity<?> modMe(@RequestBody @Validated UserDTO dto, Authentication auth, BindingResult validation){
+        if (validation.hasErrors()) {
+            StringBuilder errori = new StringBuilder("Problemi nella validazione dati :\n");
+            for (ObjectError errore : validation.getAllErrors()) {
+                errori.append(errore.getDefaultMessage()).append("\n");
+            }
+            return new ResponseEntity<>(errori.toString(), HttpStatus.BAD_REQUEST);
+        }
+        String username = auth.getName();
+        String result  = utenteService.modMe(username, dto);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

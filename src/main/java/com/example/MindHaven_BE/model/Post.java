@@ -36,7 +36,7 @@ public class Post {
 
     private Professionista professionista;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 
     private List<Commento> commenti = new ArrayList<>();
 

@@ -9,6 +9,7 @@ import java.util.List;
 
 @Data
 public class PostDTO {
+    private long id;
     @NotBlank(message = "il campo è obbligatorio")
     private String titolo;
 

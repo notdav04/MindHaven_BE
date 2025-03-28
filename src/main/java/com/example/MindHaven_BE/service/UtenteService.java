@@ -4,8 +4,11 @@ package com.example.MindHaven_BE.service;
 import com.example.MindHaven_BE.exception.UsernameDuplicateException;
 import com.example.MindHaven_BE.model.Diario;
 import com.example.MindHaven_BE.model.Pagina;
+import com.example.MindHaven_BE.model.Professionista;
 import com.example.MindHaven_BE.model.Utente;
 import com.example.MindHaven_BE.payload.PaginaDTO;
+import com.example.MindHaven_BE.payload.ProfessionistaDTO;
+import com.example.MindHaven_BE.payload.UserDTO;
 import com.example.MindHaven_BE.payload.request.RegistrazioneRequest;
 import com.example.MindHaven_BE.payload.response.LoginResponse;
 import com.example.MindHaven_BE.repository.DiarioDAORepository;
@@ -138,6 +141,15 @@ public class UtenteService {
         }
         diarioRepo.save(diario);
         return "stato del diario cambiato correttamente!";
+    }
+
+    //modifica profilo utente
+    public String modMe(String username, UserDTO dto){
+        Utente user  = userRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun utente trovato con l username indicato"));
+
+        user.setUsername(dto.getUsername());
+        userRepo.save(user);
+        return "profilo utente aggiornato correttamente ";
     }
 
     //travaso da registrazioneRequest a Utente

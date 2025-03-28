@@ -42,6 +42,8 @@ public class PostService {
         return "nuovo post con id: " + post.getId() + " dal professionista con id: " + professionista.getId();
     }
 
+
+
     public List<PostDTO> getAll(){
         List<Post> listaPost = postRepo.findAll();
         List<PostDTO> listaPostDTO = new ArrayList<>();
@@ -55,6 +57,7 @@ public class PostService {
     //travaso da Post a PostDTO
     public PostDTO post_dto(Post post){
         PostDTO dto = new PostDTO();
+        dto.setId(post.getId());
         dto.setTitolo(post.getTitolo());
         dto.setDescrizione(post.getDescrizione());
         dto.setData(post.getData());

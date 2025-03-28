@@ -25,12 +25,21 @@ public class DiarioService {
         return listaDTO;
     }
 
+    public List<DiarioDTO> getDiariInApprovazione(){
+        List<Diario> lista = diarioRepo.findByRequestedPublicTrue();
+        List<DiarioDTO> listaDTO = new ArrayList<>();
+        lista.forEach(ele->listaDTO.add(diario_dto(ele)));
+        return listaDTO;
+    }
+
 
     //travaso da Diario a DiarioDTO
     public DiarioDTO diario_dto(Diario diario){
         DiarioDTO dto = new DiarioDTO();
+
         List<Pagina> listaPagine = new ArrayList<>();
         diario.getPagine().forEach(ele->listaPagine.add(ele));
+        dto.setId(diario.getId());
         dto.setPagine(listaPagine);
         dto.setUtente(diario.getUtente());
         return dto;

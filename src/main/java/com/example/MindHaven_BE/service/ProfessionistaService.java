@@ -15,6 +15,7 @@ import com.example.MindHaven_BE.repository.DiarioDAORepository;
 import com.example.MindHaven_BE.repository.PostDAORepository;
 import com.example.MindHaven_BE.repository.ProfessionistaDAORepository;
 import com.example.MindHaven_BE.security.services.JwtUtil;
+import org.aspectj.apache.bcel.classfile.annotation.RuntimeInvisTypeAnnos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.http.HttpStatus;
@@ -154,7 +155,40 @@ public class ProfessionistaService {
         }
 
     }
+    //profilo personale
+    public ProfessionistaDTO getMe(String username) {
+        Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow(()-> new RuntimeException("nessun professionista trovato con l username indicato!"));
+        ProfessionistaDTO dto = professionista_dto(professionista);
+        return dto;
+    }
 
+    //elimina post
+    public String deletePostById(String username, long idpost){
+        Post post = postRepo.findById(idpost).orElseThrow(()->new RuntimeException("nessun post trovato con l id fornito!"));
+        List<Commento> listacommenti = post.getCommenti();
+
+        Professionista professionista = professionistaRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun professionista trovato con l username fornito!"));
+        if (post.getProfessionista().getId() == professionista.getId()){
+            listacommenti.forEach(commento->commentoRepo.deleteById(commento.getId()));
+            postRepo.deleteById(post.getId());
+            professionista.getPosts().remove(post);
+            return "post eliminato correttamente";
+        }else {
+            return "errore non puoi eliminare un post creato da altri";
+        }
+    }
+
+    //modifica profilo professionista
+    public String modMe(String username, ProfessionistaDTO dto){
+        Professionista professionista  = professionistaRepo.findByUsername(username).orElseThrow(()->new RuntimeException("nessun professionista trovato con l username indicato"));
+        professionista.setNome(dto.getNome());
+        professionista.setCognome(dto.getCognome());
+        professionista.setEmail(dto.getEmail());
+        professionista.setUsername(dto.getUsername());
+        professionistaRepo.save(professionista);
+        return "profilo professionista aggiornato correttamente ";
+
+    }
 
 
     //travaso da registrazioneProfessionistaRequest a Professionista

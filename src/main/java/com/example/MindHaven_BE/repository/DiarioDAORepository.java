@@ -8,4 +8,5 @@ import java.util.List;
 public interface DiarioDAORepository extends JpaRepository<Diario, Long> {
 
         public List<Diario> findByIsPublicTrue();
+        public List<Diario> findByRequestedPublicTrue();
 }

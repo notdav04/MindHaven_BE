@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class DiarioDTO {
+    private long id;
 
     private List<Pagina> pagine;
 
